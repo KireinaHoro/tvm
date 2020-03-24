@@ -35,6 +35,7 @@ CodeGenCHost::CodeGenCHost() {
 
 void CodeGenCHost::Init(bool output_ssa, bool emit_asserts) {
   emit_asserts_ = emit_asserts;
+  decl_stream << "#include <stdbool.h>\n";
   decl_stream << "#include \"tvm/runtime/c_runtime_api.h\"\n";
   decl_stream << "#include \"tvm/runtime/c_backend_api.h\"\n";
   decl_stream << "extern void* " << module_name_ << " = NULL;\n";

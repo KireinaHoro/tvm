@@ -136,7 +136,7 @@ def decl_tensor_intrin(op,
     if isinstance(body, (_expr.Expr, _stmt.Stmt)):
         body = [body]
     body = [_make.Evaluate(x) if isinstance(x, _expr.Expr) else x for x in body]
-    if len(body) < 3:
-        body += [None] * (3 - len(body))
+    if len(body) < 4:
+        body += [None] * (4 - len(body))
     return _api_internal._TensorIntrin(
         name, op, inputs, binds_list, scalar_params, *body)

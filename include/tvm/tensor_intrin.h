@@ -84,6 +84,11 @@ class TensorIntrinNode : public Node {
    *  Reduce: do a reduction of current output buffer with the result.
    */
   Stmt reduce_update;
+  /*!
+   * \brief Special statement for reduction op, can be None
+   *  finalize the value of output buffer.
+   */
+  Stmt reduce_finalize;
   /*! \brief constructor */
   TensorIntrinNode() {}
 
@@ -96,6 +101,7 @@ class TensorIntrinNode : public Node {
     v->Visit("body", &body);
     v->Visit("reduce_init", &reduce_init);
     v->Visit("reduce_update", &reduce_update);
+    v->Visit("reduce_finalize", &reduce_finalize);
   }
 
   TVM_DLL static TensorIntrin make(std::string name,
@@ -105,7 +111,8 @@ class TensorIntrinNode : public Node {
                                    Array<Var> scalar_params,
                                    Stmt body,
                                    Stmt reduce_init,
-                                   Stmt reduce_update);
+                                   Stmt reduce_update,
+				   Stmt reduce_finalize);
 
   static constexpr const char* _type_key = "TensorIntrin";
   TVM_DECLARE_NODE_TYPE_INFO(TensorIntrinNode, Node);

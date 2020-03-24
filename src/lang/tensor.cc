@@ -86,7 +86,8 @@ TensorIntrin TensorIntrinNode::make(std::string name,
                                     Array<Var> scalar_params,
                                     Stmt body,
                                     Stmt reduce_init,
-                                    Stmt reduce_update) {
+                                    Stmt reduce_update,
+				    Stmt reduce_finalize) {
   auto n = make_node<TensorIntrinNode>();
   n->name = std::move(name);
   n->op = std::move(op);
@@ -96,6 +97,7 @@ TensorIntrin TensorIntrinNode::make(std::string name,
   n->body = std::move(body);
   n->reduce_init = std::move(reduce_init);
   n->reduce_update = std::move(reduce_update);
+  n->reduce_finalize = std::move(reduce_finalize);
   return TensorIntrin(n);
 }
 

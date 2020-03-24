@@ -462,6 +462,7 @@ Stmt MakeTensorize(const ComputeOpNode* self,
     update_nest.emplace_back(op::MakeIfNest(n.main_predicates));
 
     if (intrin->reduce_init.defined()) {
+      std::vector<Stmt> final_block;
       // init nest
       std::vector<std::vector<Stmt> > init_nest(
           n.init_nest.begin(), n.init_nest.begin() + tloc + 1);
@@ -469,6 +470,7 @@ Stmt MakeTensorize(const ComputeOpNode* self,
       Stmt init = MergeNest(output_bind_nest, intrin->reduce_init);
       init = Substitute(init, n.init_vmap);
       init = MergeNest(init_nest, init);
+      final_block.push_back(init);
       // The update
       Stmt update = MergeNest(output_bind_nest, intrin->reduce_update);
       update = MergeNest(input_bind_nest, update);
@@ -476,7 +478,17 @@ Stmt MakeTensorize(const ComputeOpNode* self,
       update = MergeNest(binder.asserts(), update);
       update = Substitute(update, n.main_vmap);
       update = MergeNest(update_nest, update);
-      return MergeNest(common, Block::make(init, update));
+      final_block.push_back(update);
+      if (intrin->reduce_finalize.defined()) {
+      	// finalize the values
+	// TODO(jsteward): we assume that reduce_finalize only works together
+	// with reduce_init
+        Stmt finalize = MergeNest(output_bind_nest, intrin->reduce_finalize);
+        finalize = op::Substitute(finalize, n.init_vmap);
+        finalize = MergeNest(init_nest, finalize);
+        final_block.push_back(finalize);
+      }
+      return MergeNest(common, Block::make(final_block));
     } else {
       // When init op is not available, use body op for reset in the first iter.
       CHECK(intrin->body.defined())
