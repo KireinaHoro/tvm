@@ -134,6 +134,9 @@ def create_micro_lib_base(
             f.write("\n".join(src_lines))
         new_in_src_path = temp_src_path
         base_compile_cmd += ["-c"]
+    elif lib_type == LibType.AUXILIARY:
+        # do not inject dev lib for tensorize aux sources
+        base_compile_cmd += ["-c"]
     else:
         raise RuntimeError("unknown lib type")
 

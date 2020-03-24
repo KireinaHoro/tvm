@@ -26,6 +26,7 @@ import tvm
 from tvm.contrib import util as _util
 from tvm.contrib import cc as _cc
 from .._ffi.function import _init_api
+from tvm.contrib.binutil import run_cmd
 
 class LibType(Enum):
     """Enumeration of library types that can be compiled and loaded onto a device"""
@@ -33,6 +34,8 @@ class LibType(Enum):
     RUNTIME = 0
     # library to be used as an operator
     OPERATOR = 1
+    # library to be used as TensorIntrin implementation
+    AUXILIARY = 2
 
 
 class Session:
@@ -131,7 +134,7 @@ class Session:
         self._exit()
 
 
-def create_micro_mod(c_mod, dev_config):
+def create_micro_mod(c_mod, dev_config, aux_sources=[], aux_options=[]):
     """Produces a micro module from a given module.
 
     Parameters
@@ -152,6 +155,18 @@ def create_micro_mod(c_mod, dev_config):
     c_mod.export_library(
         lib_obj_path,
         fcompile=cross_compiler(dev_config, LibType.OPERATOR))
+    if aux_sources:
+        aux_obj_path = temp_dir.relpath("dev_aux.obj")
+        merged_obj_path = temp_dir.relpath("merged.obj")
+        cross_compiler(dev_config, LibType.AUXILIARY)(aux_obj_path, aux_sources, options=aux_options)
+        run_cmd([
+            '{}ld'.format(dev_config['toolchain_prefix']),
+            '-relocatable',
+            aux_obj_path,
+            lib_obj_path,
+            '-o',
+            merged_obj_path])
+        lib_obj_path = merged_obj_path
     micro_mod = tvm.module.load(lib_obj_path)
     return micro_mod
 

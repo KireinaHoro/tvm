@@ -75,7 +75,7 @@ def default_config():
                 "size": 1280,
             },
             "heap": {
-                "size": 262144,
+                "size": 0x400000,
             },
             "workspace": {
                 "size": 20480,
