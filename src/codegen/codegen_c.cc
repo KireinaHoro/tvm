@@ -820,7 +820,17 @@ void CodeGenC::VisitStmt_(const AttrStmt* op) {
     CHECK(v);
     volatile_buf_.insert(v);
   }
+  if (op->attr_key == "pragma_prologue") {
+    PrintIndent();
+    const StringImm* value = op->value.as<StringImm>();
+    stream << value->value << "();\n";
+  }
   this->PrintStmt(op->body);
+  if (op->attr_key == "pragma_epilogue") {
+    PrintIndent();
+    const StringImm* value = op->value.as<StringImm>();
+    stream << value->value << "();\n";
+  }
 }
 
 void CodeGenC::VisitStmt_(const AssertStmt* op) {
