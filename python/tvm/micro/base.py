@@ -70,12 +70,20 @@ class Session:
         self.thumb_mode = config["thumb_mode"]
         self.comms_method = config["comms_method"]
 
+        arch_config = []
+        # fix code relocation problems for RISC-V
+        if 'riscv' in self.toolchain_prefix:
+            arch_config = ['-mcmodel=medany']
+
         # First, find and compile runtime library.
         runtime_src_path = os.path.join(get_micro_host_driven_dir(), "utvm_runtime.c")
         tmp_dir = _util.tempdir()
-        runtime_obj_path = tmp_dir.relpath("utvm_runtime.obj")
-        self.create_micro_lib(runtime_obj_path, runtime_src_path, LibType.RUNTIME)
-        #input(f"check {runtime_obj_path}: ")
+        runtime_obj_path = "utvm_runtime.obj"
+        self.create_micro_lib(
+            runtime_obj_path,
+            runtime_src_path,
+            LibType.RUNTIME,
+            options=arch_config)
 
         comms_method = config["comms_method"]
         if comms_method == "openocd":
@@ -150,15 +158,23 @@ def create_micro_mod(c_mod, dev_config, aux_sources=[], aux_options=[]):
     micro_mod : tvm.module.Module
         micro module for the target device
     """
+    arch_config = []
+    # fix code relocation problems for RISC-V
+    if 'riscv' in dev_config['toolchain_prefix']:
+        arch_config = ['-mcmodel=medany']
     temp_dir = _util.tempdir()
     lib_obj_path = temp_dir.relpath("dev_lib.obj")
     c_mod.export_library(
         lib_obj_path,
-        fcompile=cross_compiler(dev_config, LibType.OPERATOR))
+        fcompile=cross_compiler(dev_config, LibType.OPERATOR),
+        options=arch_config)
     if aux_sources:
         aux_obj_path = temp_dir.relpath("dev_aux.obj")
         merged_obj_path = temp_dir.relpath("merged.obj")
-        cross_compiler(dev_config, LibType.AUXILIARY)(aux_obj_path, aux_sources, options=aux_options)
+        cross_compiler(dev_config, LibType.AUXILIARY)(
+            aux_obj_path,
+            aux_sources,
+            options=aux_options+arch_config)
         run_cmd([
             '{}ld'.format(dev_config['toolchain_prefix']),
             '-relocatable',

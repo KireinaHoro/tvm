@@ -218,9 +218,8 @@ def tvm_callback_relocate_binary(
         bss_start=bss_start,
         stack_pointer_init=stack_pointer_init)
 
-    tmp_dir = util.tempdir()
-    rel_obj_path = tmp_dir.relpath("relocated.obj")
-    rel_ld_script_path = tmp_dir.relpath("relocated.lds")
+    rel_obj_path = f"relocated-{os.path.basename(binary_path)}"
+    rel_ld_script_path = rel_obj_path + '.lds'
     with open(rel_ld_script_path, "w") as f:
         f.write(ld_script_contents)
     run_cmd([
