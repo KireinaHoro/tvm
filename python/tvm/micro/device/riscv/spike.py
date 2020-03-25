@@ -17,9 +17,9 @@
 """Compilation and config definitions for Spike, a RISC-V functional ISA simulator"""
 from collections import OrderedDict
 
-from . import create_micro_lib_base, register_device
+from .. import create_micro_lib_base, register_device
 
-DEVICE_ID = "riscv_spike"
+DEVICE_ID = "riscv.spike"
 TOOLCHAIN_PREFIX = "riscv64-unknown-elf-"
 
 def create_micro_lib(obj_path, src_path, lib_type, options=None):
@@ -72,32 +72,32 @@ def default_config(base_addr, server_addr, server_port):
         "toolchain_prefix": TOOLCHAIN_PREFIX,
         "mem_layout": OrderedDict([
             ("text", {
-                "size": 20480,
+                "size": 0x8000,
             }),
             ("rodata", {
-                "size": 20480,
+                "size": 0x8000,
             }),
             ("data", {
-                "size": 768,
+                "size": 0x1000,
             }),
             ("bss", {
-                "size": 768,
+                "size": 0x1000,
             }),
             ("args", {
-                "size": 1280,
+                "size": 0x1000,
             }),
             ("heap", {
-                "size": 262144,
+                "size": 0x200000,
             }),
             ("workspace", {
-                "size": 20480,
+                "size": 0x8000,
             }),
             ("stack", {
-                "size": 80,
+                "size": 0x1000,
             }),
         ]),
-        "word_size": 4,
-        "thumb_mode": True,
+        "word_size": 8,
+        "thumb_mode": False,
         "comms_method": "openocd",
         "server_addr": server_addr,
         "server_port": server_port,

@@ -126,7 +126,7 @@ def create_micro_lib_base(
     elif lib_type == LibType.OPERATOR:
         # create a temporary copy of the source, so we can inject the dev lib
         # header without modifying the original.
-        temp_src_path = tmp_dir.relpath("temp.c")
+        temp_src_path = "generate-temp.c"
         with open(in_src_path, "r") as f:
             src_lines = f.read().splitlines()
         src_lines.insert(0, "#include \"utvm_device_dylib_redirect.c\"")
