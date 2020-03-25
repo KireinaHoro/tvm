@@ -88,7 +88,7 @@ class OpenOCDLowLevelDevice final : public LowLevelDevice {
     }
 
     {
-      socket_.cmd_builder() << "ocd_echo $output";
+      socket_.cmd_builder() << "return $output";
       socket_.SendCommand();
       const std::string& reply = socket_.last_reply();
 
@@ -212,7 +212,7 @@ class OpenOCDLowLevelDevice final : public LowLevelDevice {
   /*! \brief maximum number of bytes allowed in a single memory transfer */
   static const constexpr ssize_t kMemTransferLimit = 64000;
   /*! \brief number of milliseconds to wait for function execution to halt */
-  static const constexpr int kWaitTime = 10000;
+  static const constexpr int kWaitTime = 10000000;
 };
 
 const std::shared_ptr<LowLevelDevice> OpenOCDLowLevelDeviceCreate(const std::string& server_addr,
