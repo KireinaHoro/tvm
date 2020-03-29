@@ -126,7 +126,7 @@ def create_micro_lib_base(
     elif lib_type == LibType.OPERATOR:
         # create a temporary copy of the source, so we can inject the dev lib
         # header without modifying the original.
-        temp_src_path = "generate-temp.c"
+        temp_src_path = tmp_dir.relpath("temp.c")
         with open(in_src_path, "r") as f:
             src_lines = f.read().splitlines()
         src_lines.insert(0, "#include \"utvm_device_dylib_redirect.c\"")
@@ -147,7 +147,7 @@ def create_micro_lib_base(
 
     prereq_obj_paths = []
     for src_path in src_paths:
-        curr_obj_path = Path(src_path).with_suffix(".o").name
+        curr_obj_path = tmp_dir.relpath(os.path.basename(Path(src_path).with_suffix(".o").name))
         assert curr_obj_path not in prereq_obj_paths
         prereq_obj_paths.append(curr_obj_path)
         curr_compile_cmd = base_compile_cmd + [src_path, "-o", curr_obj_path]

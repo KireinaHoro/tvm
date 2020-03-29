@@ -73,7 +73,7 @@ class Session:
         # First, find and compile runtime library.
         runtime_src_path = os.path.join(get_micro_host_driven_dir(), "utvm_runtime.c")
         tmp_dir = _util.tempdir()
-        runtime_obj_path = "utvm_runtime.obj"
+        runtime_obj_path = tmp_dir.relpath("utvm_runtime.obj")
         self.create_micro_lib(
             runtime_obj_path,
             runtime_src_path,
