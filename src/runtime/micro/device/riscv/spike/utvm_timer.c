@@ -28,18 +28,34 @@ extern "C" {
 
 #include "utvm_runtime.h"
 
-// TODO(jsteward): proper platform timer on RISC-V
+#define read_csr(reg) ({ unsigned long __tmp; \
+		  __asm__ volatile ("csrr %0, " #reg : "=r"(__tmp)); \
+		    __tmp; })
+#define rdcycle() read_csr(cycle)
+
+static uint64_t start_cycle = 0;
+static uint64_t stop_cycle = 0;
 
 int32_t UTVMTimerStart() {
+  start_cycle = rdcycle();
   return 0;
 }
 
-void UTVMTimerStop() { }
+void UTVMTimerStop() {
+  stop_cycle = rdcycle();
+}
 
-void UTVMTimerReset() { }
+void UTVMTimerReset() {
+  start_cycle = 0;
+  stop_cycle = 0;
+}
 
 uint32_t UTVMTimerRead() {
-  return 1;
+  if (start_cycle > stop_cycle) {
+	// something happened
+	return 0;
+  }
+  return stop_cycle - start_cycle;
 }
 
 #ifdef __cplusplus
