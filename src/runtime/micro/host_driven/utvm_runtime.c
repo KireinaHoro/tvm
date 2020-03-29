@@ -28,6 +28,9 @@
  * Additionally included in this file are definitions for some of the most
  * common functions used in the C runtime API.
  */
+
+#include <stdbool.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -80,7 +83,9 @@ void UTVMMain() {
 
 // We use a dummy function to signal execution is finished for device
 // backends which require breakpoints.
-void UTVMDone() { }
+void UTVMDone() {
+	while (true);
+}
 
 void* TVMBackendAllocWorkspace(int device_type, int device_id, uint64_t size,
                                int dtype_code_hint, int dtype_bits_hint) {
