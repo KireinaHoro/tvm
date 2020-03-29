@@ -95,7 +95,7 @@ def default_config(base_addr, server_addr, server_port):
                 "size": 0x1000,
             }),
             ("heap", {
-                "size": 0x200000,
+                "size": 0x2000000,
             }),
             ("workspace", {
                 "size": 0x8000,
