@@ -209,7 +209,7 @@ cl = opencl
 mtl = metal
 
 
-def array(arr, ctx=cpu(0)):
+def array(arr, ctx=cpu(0), copy=True):
     """Create an array from source arr.
 
     Parameters
@@ -227,6 +227,9 @@ def array(arr, ctx=cpu(0)):
     """
     if not isinstance(arr, (_np.ndarray, NDArray)):
         arr = _np.array(arr)
-    return empty(arr.shape, arr.dtype, ctx).copyfrom(arr)
+    if copy:
+        return empty(arr.shape, arr.dtype, ctx).copyfrom(arr)
+    else:
+        return empty(arr.shape, arr.dtype, ctx)
 
 _set_class_ndarray(NDArray)

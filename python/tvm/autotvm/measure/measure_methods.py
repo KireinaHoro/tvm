@@ -481,7 +481,7 @@ def run_through_rpc(measure_input, build_result,
             # create empty arrays on the remote device and copy them once.
             # This can avoid some memory issues that make the measurement results unreliable.
             args = [nd.empty(x[0], dtype=x[1], ctx=ctx) for x in build_result.arg_info]
-            args = [nd.array(x, ctx=ctx) for x in args]
+            args = [nd.array(x, ctx=ctx, copy=False) for x in args]
             ctx.sync()
 
         costs = time_f(*args).results
