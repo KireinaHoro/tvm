@@ -39,6 +39,14 @@ def create_micro_lib(obj_path, src_path, lib_type, options=None):
     options : Optional[List[str]]
         additional options to pass to GCC
     """
+    if options is None:
+        options = []
+    options += [
+        '-mcmodel=medany',
+        '-O2',
+        '-ffast-math',
+        '-fno-inline',
+    ]
     create_micro_lib_base(
         obj_path,
         src_path,

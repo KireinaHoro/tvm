@@ -70,11 +70,6 @@ class Session:
         self.thumb_mode = config["thumb_mode"]
         self.comms_method = config["comms_method"]
 
-        arch_config = []
-        # fix code relocation problems for RISC-V
-        if 'riscv' in self.toolchain_prefix:
-            arch_config = ['-mcmodel=medany']
-
         # First, find and compile runtime library.
         runtime_src_path = os.path.join(get_micro_host_driven_dir(), "utvm_runtime.c")
         tmp_dir = _util.tempdir()
@@ -82,8 +77,7 @@ class Session:
         self.create_micro_lib(
             runtime_obj_path,
             runtime_src_path,
-            LibType.RUNTIME,
-            options=arch_config)
+            LibType.RUNTIME)
 
         comms_method = config["comms_method"]
         if comms_method == "openocd":
@@ -141,8 +135,7 @@ class Session:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self._exit()
 
-
-def create_micro_mod(c_mod, dev_config, aux_sources=[], aux_options=[]):
+def compile_micro_mod(out_path, c_mod, dev_config, aux_sources=[], aux_options=[]):
     """Produces a micro module from a given module.
 
     Parameters
@@ -158,32 +151,34 @@ def create_micro_mod(c_mod, dev_config, aux_sources=[], aux_options=[]):
     micro_mod : tvm.module.Module
         micro module for the target device
     """
-    arch_config = []
-    # fix code relocation problems for RISC-V
-    if 'riscv' in dev_config['toolchain_prefix']:
-        arch_config = ['-mcmodel=medany']
     temp_dir = _util.tempdir()
-    lib_obj_path = temp_dir.relpath("dev_lib.obj")
-    c_mod.export_library(
-        lib_obj_path,
-        fcompile=cross_compiler(dev_config, LibType.OPERATOR),
-        options=arch_config)
     if aux_sources:
+        lib_obj_path = temp_dir.relpath("dev_lib.obj")
         aux_obj_path = temp_dir.relpath("dev_aux.obj")
-        merged_obj_path = temp_dir.relpath("merged.obj")
+        c_mod.export_library(
+            lib_obj_path,
+            fcompile=cross_compiler(dev_config, LibType.OPERATOR))
         cross_compiler(dev_config, LibType.AUXILIARY)(
             aux_obj_path,
             aux_sources,
-            options=aux_options+arch_config)
+            options=aux_options)
         run_cmd([
             '{}ld'.format(dev_config['toolchain_prefix']),
             '-relocatable',
             aux_obj_path,
             lib_obj_path,
             '-o',
-            merged_obj_path])
-        lib_obj_path = merged_obj_path
-    micro_mod = tvm.module.load(lib_obj_path)
+            out_path])
+    else:
+        c_mod.export_library(
+            out_path,
+            fcompile=cross_compiler(dev_config, LibType.OPERATOR))
+
+def create_micro_mod(c_mod, dev_config, aux_sources=[], aux_options=[]):
+    tmp_dir = _util.tempdir()
+    compile_micro_mod(tmp_dir.relpath('module.obj'), c_mod, dev_config,
+            aux_sources=aux_sources, aux_options=aux_options)
+    micro_mod = tvm.module.load(out_path)
     return micro_mod
 
 

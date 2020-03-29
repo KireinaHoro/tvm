@@ -402,11 +402,16 @@ def _wrap_build_func(build_func):
         """
         tic = time.time()
         try:
+            from ...micro.base import compile_micro_mod
             filename = os.path.join(tmp_dir, "tmp_func_%0x.%s" % (
                 getrandbits(64), output_format))
             # TODO(tvm-team) consider linline _build_func_common
             func, arg_info = _build_func_common(measure_input, **kwargs)
-            func.export_library(filename, build_func)
+            if hasattr(build_func, 'args'):
+                # run MicroTVM build func
+                compile_micro_mod(filename, func, *build_func.args) 
+            else:
+                func.export_library(filename, build_func)
         except Exception as e:  # pylint: disable=broad-except
             return BuildResult(None, None, e, time.time() - tic)
         return BuildResult(filename, arg_info, None, time.time() - tic)

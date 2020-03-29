@@ -79,9 +79,9 @@ def context(dev_type, dev_id=0):
             dev_type = 'micro_dev'
         else:
             dev_type = dev_type.split()[0]
-            if dev_type not in TVMContext.STR2MASK:
-                raise ValueError("Unknown device type %s" % dev_type)
-            dev_type = TVMContext.STR2MASK[dev_type]
+        if dev_type not in TVMContext.STR2MASK:
+            raise ValueError("Unknown device type %s" % dev_type)
+        dev_type = TVMContext.STR2MASK[dev_type]
     return TVMContext(dev_type, dev_id)
 
 
