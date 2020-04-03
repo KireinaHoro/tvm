@@ -75,7 +75,7 @@ class MicroSession : public ModuleNode {
 
   /*!
    * \brief creates session by setting up a low-level device and initting allocators for it
-   * \param comms_method method of communication with the device (e.g., "openocd")
+   * \param comms_method method of communication with the device (e.g., "openocd", "zynq")
    * \param binary_path file system path to the runtime binary
    * \param toolchain_prefix GCC toolchain prefix
    * \param text_start text section start address
@@ -96,8 +96,8 @@ class MicroSession : public ModuleNode {
    * \param stack_size stack section size
    * \param word_size number of bytes in a word on the target device
    * \param thumb_mode whether the target device requires a thumb-mode bit on function addresses
-   * \param server_addr address of the OpenOCD server to connect to (if `comms_method == "openocd"`)
-   * \param port port of the OpenOCD server to connect to (if `comms_method == "openocd"`)
+   * \param server_addr address of the OpenOCD server to connect to (if `comms_method == "openocd" || comms_method == "zynq"`)
+   * \param port port of the OpenOCD server to connect to (if `comms_method == "openocd" || comms_method == "zynq"`)
    */
   MicroSession(
       const std::string& comms_method,

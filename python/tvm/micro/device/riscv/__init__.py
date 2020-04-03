@@ -17,3 +17,4 @@
 """Base module for RISC-V device configurations"""
 
 from . import spike
+from . import rocketchip_zynq

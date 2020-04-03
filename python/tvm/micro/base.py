@@ -80,7 +80,7 @@ class Session:
             LibType.RUNTIME)
 
         comms_method = config["comms_method"]
-        if comms_method == "openocd":
+        if comms_method in ["openocd", 'zynq']:
             server_addr = config["server_addr"]
             server_port = config["server_port"]
         elif comms_method == "host":

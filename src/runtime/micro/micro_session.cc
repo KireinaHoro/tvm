@@ -179,6 +179,40 @@ MicroSession::MicroSession(
       .start = DevPtr(stack_start),
       .size = stack_size,
     }, word_size_);
+  } else if (comms_method == "zynq") {
+    low_level_device_ = ZynqLowLevelDeviceCreate(server_addr, port);
+    section_allocators_[0] = std::make_shared<MicroSectionAllocator>(DevMemRegion {
+      .start = DevPtr(text_start),
+      .size = text_size,
+    }, word_size_);
+    section_allocators_[1] = std::make_shared<MicroSectionAllocator>(DevMemRegion {
+      .start = DevPtr(rodata_start),
+      .size = rodata_size,
+    }, word_size_);
+    section_allocators_[2] = std::make_shared<MicroSectionAllocator>(DevMemRegion {
+      .start = DevPtr(data_start),
+      .size = data_size,
+    }, word_size_);
+    section_allocators_[3] = std::make_shared<MicroSectionAllocator>(DevMemRegion {
+      .start = DevPtr(bss_start),
+      .size = bss_size,
+    }, word_size_);
+    section_allocators_[4] = std::make_shared<MicroSectionAllocator>(DevMemRegion {
+      .start = DevPtr(args_start),
+      .size = args_size,
+    }, word_size_);
+    section_allocators_[5] = std::make_shared<MicroSectionAllocator>(DevMemRegion {
+      .start = DevPtr(heap_start),
+      .size = heap_size,
+    }, word_size_);
+    section_allocators_[6] = std::make_shared<MicroSectionAllocator>(DevMemRegion {
+      .start = DevPtr(workspace_start),
+      .size = workspace_size,
+    }, word_size_);
+    section_allocators_[7] = std::make_shared<MicroSectionAllocator>(DevMemRegion {
+      .start = DevPtr(stack_start),
+      .size = stack_size,
+    }, word_size_);
   } else {
     LOG(FATAL) << "unsupported micro low-level device";
   }

@@ -88,6 +88,13 @@ const std::shared_ptr<LowLevelDevice> HostLowLevelDeviceCreate(size_t num_bytes,
 const std::shared_ptr<LowLevelDevice> OpenOCDLowLevelDeviceCreate(const std::string& addr,
                                                                   int port);
 
+/*!
+ * \brief connect to Zynq daemon and create a Zynq low-level device
+ * \param addr address of the Zynq server to connect to
+ * \param port port of the Zynq server to connect to
+ */
+const std::shared_ptr<LowLevelDevice> ZynqLowLevelDeviceCreate(const std::string& addr,
+                                                                  int port);
 }  // namespace runtime
 }  // namespace tvm
 #endif  // TVM_RUNTIME_MICRO_LOW_LEVEL_DEVICE_H_
