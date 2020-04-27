@@ -43,6 +43,8 @@ def create_micro_lib(obj_path, src_path, lib_type, options=None):
         options = []
     options += [
         '-mcmodel=medany',
+        '-mabi=lp64',
+        '-march=rv64imac',
         '-O2',
         '-ffast-math',
         '-fno-inline',
@@ -110,6 +112,8 @@ def default_config(base_addr, server_addr, server_port):
         "server_addr": server_addr,
         "server_port": server_port,
     }
+    # offset `base_addr` by 0x100000 (1M) for monitor region
+    base_addr += 0x100000
     # generate section start addresses from the given `base_addr`
     curr_offset = 0
     mem_layout = res["mem_layout"]

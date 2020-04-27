@@ -94,6 +94,7 @@ def _parse_server_opt(opts):
     for kv in opts:
         if kv.startswith("-timeout="):
             ret["timeout"] = float(kv[9:])
+    ret["timeout"] = float(600)
     return ret
 
 def _listen_loop(sock, port, rpc_key, tracker_addr, load_library, custom_addr):

@@ -100,7 +100,6 @@ def create_micro_lib_base(
         "-Wextra",
         "--pedantic",
         "-c",
-        "-O0",
         "-g",
         "-nostartfiles",
         "-nodefaultlibs",

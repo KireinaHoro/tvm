@@ -43,6 +43,8 @@ def create_micro_lib(obj_path, src_path, lib_type, options=None):
         options = []
     options += [
         '-mcmodel=medany',
+        '-march=rv64imac',
+        '-mabi=lp64',
         '-O2',
         '-ffast-math',
         '-fno-inline',

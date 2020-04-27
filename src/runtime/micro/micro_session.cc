@@ -27,6 +27,7 @@
 #include <stack>
 #include <tuple>
 #include <vector>
+#include <fstream>
 #include "micro_session.h"
 #include "low_level_device.h"
 #include "target_data_layout_encoder.h"
@@ -330,6 +331,11 @@ BinaryInfo MicroSession::LoadBinary(const std::string& binary_path, bool patch_d
       bss_section.start,
       GetAllocator(SectionKind::kStack)->max_addr(),
       toolchain_prefix_);
+
+  std::ofstream relocated("/tmp/relocated.obj");
+  relocated << relocated_bin;
+  relocated.close();
+
   std::string text_contents = ReadSection(relocated_bin, SectionKind::kText, toolchain_prefix_);
   std::string rodata_contents = ReadSection(relocated_bin, SectionKind::kRodata, toolchain_prefix_);
   std::string data_contents = ReadSection(relocated_bin, SectionKind::kData, toolchain_prefix_);

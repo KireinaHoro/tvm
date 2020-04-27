@@ -86,6 +86,9 @@ fail:
 			if (bytes_read < 0) {
 				perror("read");
 				return -1;
+			} else if (bytes_read == 0) {
+				// short read
+				break;
 			}
 			total_read += bytes_read;
 		}
@@ -100,6 +103,9 @@ fail:
 			if (bytes_sent < 0) {
 				perror("send");
 				return -1;
+			} else if (bytes_sent == 0) {
+				// short write
+				break;
 			}
 			total_sent += bytes_sent;
 		}

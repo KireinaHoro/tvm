@@ -398,6 +398,7 @@ class Tracker(object):
         if not self.port:
             raise ValueError("cannot bind to any port in [%d, %d)" % (port, port_end))
         logger.info("bind to %s:%d", host, self.port)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.listen(1)
         self.proc = multiprocessing.Process(
             target=_tracker_server, args=(sock, self.stop_key))
