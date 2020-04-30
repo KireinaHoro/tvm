@@ -64,10 +64,10 @@ bool ArgBinder::Bind_(const Expr& arg,
       }
       return true;
     } else {
-      BinderAddAssert(it->second == value, arg_name, &asserts_);
+      //BinderAddAssert(it->second == value, arg_name, &asserts_);
     }
   } else {
-    BinderAddAssert(arg == value, arg_name, &asserts_);
+    //BinderAddAssert(arg == value, arg_name, &asserts_);
   }
   return false;
 }
