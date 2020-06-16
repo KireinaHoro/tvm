@@ -24,8 +24,10 @@ namespace ir {
 class IntrinsicMatch final : public ExprFunctor<bool(const Expr &, const Expr &)> {
  public:
   using ExprFunctor::VisitExpr;
+  IntrinsicMatch(
+    std::unordered_map<const Variable*, const Variable*> &mapping) : mapping_(mapping) {}
  private:
-  std::unordered_map<const Variable*, const Variable*> mapping;
+  std::unordered_map<const Variable*, const Variable*> &mapping_;
  protected:
   using ExprFunctor::VisitExpr_;
   #define MATCH(T)                            \
@@ -39,12 +41,12 @@ class IntrinsicMatch final : public ExprFunctor<bool(const Expr &, const Expr &)
   
   bool VisitExpr_(const Variable* op, const Expr &expr) final {
     MATCH(Variable)
-    if (mapping.find(op) != mapping.end()) {
+    if (mapping_.find(op) != mapping_.end()) {
       // already mapped
-      return another == mapping[op];
+      return another == mapping_[op];
     } else {
       // not mapped
-      mapping[op] = another;
+      mapping_[op] = another;
       return true;
     }
   }
@@ -318,7 +320,16 @@ bool intrinsic_match(
   }
   subexpr = SubIndexExpr(subexpr, reserved);
 
-  IntrinsicMatch im;
+  std::unordered_map<const Variable*, const Variable*> mapping;
+  int num_axis = (int)spatial.size();
+  if (num_axis != (int)intrin_op->axis.size()) {
+    return false;
+  }
+  for (int i = 0; i < num_axis; ++i) {
+    mapping[spatial[i].get()] = intrin_op->axis[i]->var.get();
+  }
+
+  IntrinsicMatch im(mapping);
   return im.VisitExpr(subexpr, intrin_op->body[intrinsic->value_index]);
 }
 
