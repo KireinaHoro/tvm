@@ -131,6 +131,11 @@ TVM_REGISTER_API("ir_pass.LowerStorageAccess")
   *ret = LoweredFunc(n);
 });
 
+// TVM_REGISTER_API("ir_pass.IntrinsicMatch")
+// .set_body([](TVMArgs args, TVMRetValue *ret) {
+//   *ret = intrinsic_match(args[0], args[1], args[2], args[3]);
+// });
+
 // make from two arguments
 #define REGISTER_PASS(PassName)                                   \
   TVM_REGISTER_API("ir_pass."#PassName)                           \
@@ -171,6 +176,7 @@ REGISTER_PASS(LowerTVMBuiltin);
 REGISTER_PASS(CombineContextCall);
 REGISTER_PASS(VerifyMemory);
 REGISTER_PASS(VerifyGPUCode);
+REGISTER_PASS(intrinsic_match);
 REGISTER_PASS(DecorateDeviceScope);
 REGISTER_PASS(InstrumentBoundCheckers);
 REGISTER_PASS(VerifyCompactBuffer);

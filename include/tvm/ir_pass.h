@@ -607,6 +607,13 @@ bool VerifyGPUCode(Stmt stmt,
                    Map<std::string, Expr> constraints);
 
 
+bool intrinsic_match(
+                const Tensor &target,
+                const Tensor &intrinsic,
+                Array<Var> spatial,
+                Array<Var> reduce);
+
+
 }  // namespace ir
 }  // namespace tvm
 

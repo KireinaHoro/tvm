@@ -127,6 +127,7 @@ file(GLOB COMPILER_SRCS
     src/api/*.cc
     src/arithmetic/*.cc
     src/autotvm/*.cc
+    src/micro/*cc
     src/codegen/*.cc
     src/lang/*.cc
     src/pass/*.cc
